@@ -12,6 +12,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using ArcGIS.Core.Data;
+using ArcGIS.Core.Data.PluginDatastore;
+using ArcGIS.Desktop.Framework.Threading.Tasks;
+using ArcGIS.Desktop.Mapping;
 
 
 namespace NwisPlugin
@@ -26,9 +30,28 @@ namespace NwisPlugin
             InitializeComponent();
         }
 
-        public void ImportButton_Click(object sender, RoutedEventArgs e)
+        public async void ImportButton_Click(object sender, RoutedEventArgs e)
         {
-
+            await QueuedTask.Run(() =>
+            {
+                using (var plugin = new PluginDatastore(
+                           new PluginDatasourceConnectionPath("NwisDataSourcePlugin_Datasource", new Uri("https://waterservices.usgs.gov/nwis"))))
+                {
+                    System.Diagnostics.Debug.Write("==========================\r\n");
+                    foreach (var table_name in plugin.GetTableNames())
+                    {
+                        System.Diagnostics.Debug.Write($"Table: {table_name}\r\n");
+                        //open each table....use the returned table name
+                        //or just pass in the name of a csv file in the workspace folder
+                        using (var table = plugin.OpenTable(table_name))
+                        {
+                            StandaloneTableFactory.Instance.CreateStandaloneTable(new StandaloneTableCreationParams(table), MapView.Active.Map);
+                            //Add as a layer to the active map or scene
+                            //LayerFactory.Instance.CreateLayer<FeatureLayer>(new FeatureLayerCreationParams((FeatureClass)table), MapView.Active.Map);
+                        }
+                    }
+                }
+            });
         }
 
 

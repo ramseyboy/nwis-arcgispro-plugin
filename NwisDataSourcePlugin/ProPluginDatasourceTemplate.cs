@@ -1,51 +1,36 @@
-﻿using ArcGIS.Core.Data;
-using ArcGIS.Core.Data.PluginDatastore;
-using ArcGIS.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ArcGIS.Core.Data.PluginDatastore;
 
-namespace Plugin
+namespace NwisDataSourcePlugin
 {
     public class ProPluginDatasourceTemplate : PluginDatasourceTemplate
     {
 
         public override void Open(Uri connectionPath)
         {
-            //TODO Initialize your plugin instance. Individual instances
-            //of your plugin may be initialized on different threads
-            throw new NotImplementedException();
+            // nothing to open, stateless
         }
 
         public override void Close()
         {
-            //TODO Cleanup required to close the plugin 
-            //data source instance
-            throw new NotImplementedException();
+            // nothing to close, stateless
         }
 
         public override PluginTableTemplate OpenTable(string name)
         {
-            //TODO Open the given table/object in the plugin
-            //data source
-            throw new NotImplementedException();
+            var modelName = Enum.Parse<NwisModels>(name);
+            return new ProPluginTableTemplate(modelName);
         }
 
         public override IReadOnlyList<string> GetTableNames()
         {
-            var tableNames = new List<string>();
-
-            //TODO Return the names of all tables in the plugin
-            //data source
-            return tableNames;
+            return Enum.GetNames<NwisModels>();
         }
 
         public override bool IsQueryLanguageSupported()
         {
-            //default is false
-            return base.IsQueryLanguageSupported();
+            return false;
         }
     }
 }

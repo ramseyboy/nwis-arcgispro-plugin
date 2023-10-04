@@ -7,7 +7,7 @@ namespace NwisApiClient.Serializers;
 
 public static class RdbReader
 {
-    public static async Task<List<T>> ReadAsync<T>(Stream stream, CancellationToken cancellationToken = new())
+    public static List<T> Read<T>(Stream stream)
     {
         using var reader = new StreamReader(stream);
         var configuration = new CsvConfiguration(CultureInfo.InvariantCulture)
@@ -17,7 +17,6 @@ public static class RdbReader
             ShouldSkipRecord = row => row.Row[0].StartsWith("#") || row.Row[0].StartsWith("5s")
         };
         using var csv = new CsvReader(reader, configuration);
-        var asyncEnum = csv.GetRecordsAsync<T>(cancellationToken);
-        return await asyncEnum.ToListAsync(cancellationToken);
+        return csv.GetRecords<T>().ToList();
     }
 }

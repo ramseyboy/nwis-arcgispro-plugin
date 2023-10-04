@@ -1,54 +1,76 @@
-﻿using ArcGIS.Core.Data;
-using ArcGIS.Core.Data.PluginDatastore;
-using ArcGIS.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using System.Threading.Tasks;
+using ArcGIS.Core.Data;
+using ArcGIS.Core.Data.PluginDatastore;
+using ArcGIS.Core.Geometry;
+using NwisApiClient;
+using NwisApiClient.Models;
+using NwisDataSourcePlugin.Attributes;
+using NwisDataSourcePlugin.Extensions;
+using NwisDataSourcePlugin.Models;
 
-namespace Plugin
+namespace NwisDataSourcePlugin
 {
-    public class ProPluginTableTemplate : PluginTableTemplate
+    internal interface IPluginRowProvider
     {
+        PluginRow FindRow(long oid);
+    }
+
+    public class ProPluginTableTemplate : PluginTableTemplate, IPluginRowProvider
+    {
+
+        private readonly NwisModels _modelName;
+        private readonly IEnumerable<Site> _data;
+
+        public ProPluginTableTemplate(NwisModels modelName)
+        {
+            _modelName = modelName;
+            var nwisApi = NwisApi.Create();
+            _data = Task.Run( async () => await nwisApi.GetSites("tx")).Result;
+        }
 
         public override IReadOnlyList<PluginField> GetFields()
         {
-            var pluginFields = new List<PluginField>();
-            //TODO Get the list of PluginFields for this currently opened 
-            //plugin table/object
-            return pluginFields;
+            return _modelName switch
+            {
+                NwisModels.Sites => typeof(SitePluginModel).ToPluginFields(),
+                _ => throw new ArgumentOutOfRangeException(nameof(_modelName))
+            };
         }
 
         public override string GetName()
         {
-            //TODO Get the name of this currently opened plugin table/object
-            throw new NotImplementedException();
+            return _modelName.ToString();
         }
 
         public override PluginCursorTemplate Search(QueryFilter queryFilter)
         {
-            //TODO Perform a non-spatial search on this currently opened 
-            //plugin table/object
-            //Where clause will always be empty if 
-            //PluginDatasourceTemplate.IsQueryLanguageSupported = false.
-            throw new NotImplementedException();
+            var ids = _data.Select(x => x.SiteNumber!.Value).ToList();
+            return new ProPluginCursorTemplate(this, ids);
         }
 
         public override PluginCursorTemplate Search(SpatialQueryFilter spatialQueryFilter)
         {
-            //TODO Perform a spatial search on this currently opened 
-            //plugin table/object
-            //Where clause will always be empty if 
-            //PluginDatasourceTemplate.IsQueryLanguageSupported = false.
-            throw new NotImplementedException();
+            var ids = _data.Select(x => x.SiteNumber!.Value).ToList();
+            return new ProPluginCursorTemplate(this, ids);
         }
 
         public override GeometryType GetShapeType()
         {
-            //TODO return the correct GeometryType if the plugin table
-            //is a feature class
-            return GeometryType.Unknown;
+            return GeometryType.Point;
+        }
+
+        public PluginRow FindRow(long oid)
+        {
+            var obj = _data.FirstOrDefault(x => x.SiteNumber == oid);
+            var values = obj.GetType()
+                .GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
+                .Select(fi => fi.GetValue(obj))
+                .ToList();
+            return new PluginRow(values);
         }
     }
 }

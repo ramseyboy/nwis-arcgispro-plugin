@@ -1,28 +1,36 @@
-﻿using ArcGIS.Core.Data;
-using ArcGIS.Core.Data.PluginDatastore;
-using ArcGIS.Core.Geometry;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ArcGIS.Core.Data.PluginDatastore;
 
-namespace Plugin
+namespace NwisDataSourcePlugin
 {
     public class ProPluginCursorTemplate : PluginCursorTemplate
     {
+        private readonly Queue<long> _oids;
+        private long _current = -1;
+        private readonly IPluginRowProvider _rowProvider;
+
+        internal ProPluginCursorTemplate(IPluginRowProvider rowProvider, IEnumerable<long> oids)
+        {
+            _rowProvider = rowProvider;
+            _oids = new Queue<long>(oids);
+        }
+
         public override PluginRow GetCurrentRow()
         {
-            var listOfRowValues = new List<object>();
-            //TODO collect the values for the current row
-
-            return new PluginRow(listOfRowValues);
+            return _rowProvider.FindRow(_current);
         }
 
         public override bool MoveNext()
         {
-            //TODO determine if there are more rows
-            throw new NotImplementedException();
+            if (_oids.Count == 0)
+            {
+                return false;
+            }
+
+            _current = _oids.Dequeue();
+
+            return true;
         }
     }
 }

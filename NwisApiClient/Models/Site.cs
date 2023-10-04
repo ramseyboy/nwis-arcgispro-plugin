@@ -2,7 +2,34 @@ using CsvHelper.Configuration.Attributes;
 
 namespace NwisApiClient.Models;
 
-public class Site
+public interface ISite
+{
+    public string? AgencyCode { get; set; }
+
+    public long? SiteNumber { get; set; }
+
+    public string? SiteName { get; set; }
+
+    public string? SiteType { get; set; }
+
+    public decimal? Latitude { get; set; }
+
+    public decimal? Longitude { get; set; }
+
+    public string? LatLongAccuracy { get; set; }
+
+    public string? LatLongDatum { get; set; }
+
+    public decimal? Altitude { get; set; }
+
+    public decimal? AltitudeAccuracy { get; set; }
+
+    public string? AltitudeDatum { get; set; }
+
+    public string? HydrologicUnitCode { get; set; }
+}
+
+public sealed class Site: ISite
 {
 
     /*
@@ -24,7 +51,7 @@ public class Site
     public string? AgencyCode { get; set; }
 
     [Name("site_no")]
-    public string? SiteNumber { get; set; }
+    public long? SiteNumber { get; set; }
 
     [Name("station_nm")]
     public string? SiteName { get; set; }

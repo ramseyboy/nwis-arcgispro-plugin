@@ -6,18 +6,32 @@ namespace NwisApiClient
 {
     public interface INwisApi
     {
-        public Task<IEnumerable<Site>> GetSites(string state);
+        public Task<List<Site>> GetSites(string state);
     }
 
     public class NwisApi: INwisApi
     {
         private const string ApiUrl = "https://waterservices.usgs.gov/nwis";
-        private readonly INwisApiInternal _nwisApiInternal = RestService.For<INwisApiInternal>(ApiUrl);
+        //private readonly INwisApiInternal _nwisApiInternal = RestService.For<INwisApiInternal>(ApiUrl);
 
-        public async Task<IEnumerable<Site>> GetSites(string state)
+        public static INwisApi Create()
         {
-            var res = await _nwisApiInternal.GetSites(state);
-            return await RdbReader.ReadAsync<Site>(await res.Content.ReadAsStreamAsync());
+            return new NwisApi();
+        }
+
+        private NwisApi()
+        {
+
+        }
+
+        public async Task<List<Site>> GetSites(string state)
+        {
+            UriBuilder builder = new UriBuilder(ApiUrl + "/site");
+            builder.Query = $"stateCd={state}&format=rdb";
+            var uri = builder.Uri;
+
+            var res = await new HttpClient().GetAsync(uri).ConfigureAwait(false);
+            return RdbReader.Read<Site>(await res.Content.ReadAsStreamAsync().ConfigureAwait(false));
         }
     }
 

@@ -13,10 +13,10 @@
     <Target name="ArcGISPro" version="3.1" />
   </Targets>
   <!-- CLR should be set to the target framework set in the .csproj -->
-  <AddIn language="CLR:PluginDS" library="Plugin.dll" namespace="Plugin">
+  <AddIn language="CLR:PluginDS" library="NwisDataSourcePlugin.dll" namespace="NwisDataSourcePlugin">
     <ArcGISPro>
       <PluginDatasources>
-        <PluginDatasource id="Plugin_Datasource" class="ProPluginDatasourceTemplate"/>
+        <PluginDatasource id="NwisDataSourcePlugin_Datasource" class="ProPluginDatasourceTemplate"/>
       </PluginDatasources>
     </ArcGISPro>
   </AddIn>
