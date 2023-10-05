@@ -45,9 +45,9 @@ namespace NwisPlugin
                         //or just pass in the name of a csv file in the workspace folder
                         using (var table = plugin.OpenTable(table_name))
                         {
-                            StandaloneTableFactory.Instance.CreateStandaloneTable(new StandaloneTableCreationParams(table), MapView.Active.Map);
+                            //StandaloneTableFactory.Instance.CreateStandaloneTable(new StandaloneTableCreationParams(table), MapView.Active.Map);
                             //Add as a layer to the active map or scene
-                            //LayerFactory.Instance.CreateLayer<FeatureLayer>(new FeatureLayerCreationParams((FeatureClass)table), MapView.Active.Map);
+                            LayerFactory.Instance.CreateLayer<FeatureLayer>(new FeatureLayerCreationParams(table as FeatureClass), MapView.Active.Map);
                         }
                     }
                 }

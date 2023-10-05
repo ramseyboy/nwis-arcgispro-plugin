@@ -6,14 +6,14 @@ namespace NwisDataSourcePlugin
 {
     public class ProPluginCursorTemplate : PluginCursorTemplate
     {
-        private readonly Queue<long> _oids;
-        private long _current = -1;
+        private readonly Queue<int> _oids;
+        private int _current = -1;
         private readonly IPluginRowProvider _rowProvider;
 
-        internal ProPluginCursorTemplate(IPluginRowProvider rowProvider, IEnumerable<long> oids)
+        internal ProPluginCursorTemplate(IPluginRowProvider rowProvider, IEnumerable<int> oids)
         {
             _rowProvider = rowProvider;
-            _oids = new Queue<long>(oids);
+            _oids = new Queue<int>(oids);
         }
 
         public override PluginRow GetCurrentRow()
