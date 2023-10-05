@@ -33,6 +33,17 @@
         </TextBlock.ToolTip>
       </TextBlock>
     </DockPanel>
-      <Button Margin="66,33" Grid.Row="1" Click="ImportButton_Click">Import</Button>
+    <StackPanel Margin="10">
+      <ComboBox Name="stateComboBox" SelectionChanged="stateComboBox_SelectionChanged">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <StackPanel Orientation="Horizontal">
+              <TextBlock Text="{Binding Label}" />
+            </StackPanel>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+    </StackPanel>
+    <Button Margin="66,33" Grid.Row="1" Click="ImportButton_Click">Import</Button>
     </Grid>
 </UserControl>

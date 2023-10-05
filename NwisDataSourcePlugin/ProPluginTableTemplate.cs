@@ -4,6 +4,7 @@ using System.Collections.Immutable;
 using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
+using System.Web;
 using ArcGIS.Core.Data;
 using ArcGIS.Core.Data.PluginDatastore;
 using ArcGIS.Core.Geometry;
@@ -34,11 +35,16 @@ namespace NwisDataSourcePlugin
         private readonly SortedDictionary<int, SitePluginModel> _bTree;
         private readonly STRtree<SitePluginModel> _rTree;
 
-        public ProPluginTableTemplate(NwisModels modelName)
+        public ProPluginTableTemplate(Uri parameterUri, NwisModels modelName)
         {
             _modelName = modelName;
             var nwisApi = NwisApi.Create();
-            var apiData = Task.Run( async () => await nwisApi.GetSites("tx")).Result;
+            var decoded = HttpUtility.UrlDecode(parameterUri.ToString());
+            var queryParameters = HttpUtility.ParseQueryString(new Uri(decoded).Query);
+
+            var state = queryParameters.Get("stateCd");
+
+            var apiData = Task.Run( async () => await nwisApi.GetSites(state)).Result;
             _list = apiData.Select((x, i) => new SitePluginModel
             {
                 ObjectId = i,

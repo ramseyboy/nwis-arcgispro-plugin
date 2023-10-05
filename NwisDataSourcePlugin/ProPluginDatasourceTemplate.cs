@@ -1,26 +1,35 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using ArcGIS.Core.Data.PluginDatastore;
 
 namespace NwisDataSourcePlugin
 {
     public class ProPluginDatasourceTemplate : PluginDatasourceTemplate
     {
+        private Uri _currentUri;
+
+        private Dictionary<Uri, PluginTableTemplate> _tables;
 
         public override void Open(Uri connectionPath)
         {
-            // nothing to open, stateless
+            _currentUri = connectionPath;
+            _tables = new Dictionary<Uri, PluginTableTemplate>();
         }
 
         public override void Close()
         {
-            // nothing to close, stateless
+            _tables.Clear();
         }
 
         public override PluginTableTemplate OpenTable(string name)
         {
-            var modelName = Enum.Parse<NwisModels>(name);
-            return new ProPluginTableTemplate(modelName);
+            if (!_tables.Keys.Contains(_currentUri))
+            {
+                var modelName = Enum.Parse<NwisModels>(name);
+                _tables[_currentUri] = new ProPluginTableTemplate(_currentUri, modelName);
+            }
+            return _tables[_currentUri];
         }
 
         public override IReadOnlyList<string> GetTableNames()
