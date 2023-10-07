@@ -1,18 +1,28 @@
-﻿using NwisApiClient.Models;
+﻿using System.Net;
+using System.Reflection;
+using NetTopologySuite.Geometries;
+using NwisApiClient.Extensions;
+using NwisApiClient.Models;
+using NwisApiClient.Models.Codes;
+using NwisApiClient.Parameters;
 using NwisApiClient.Serializers;
-using Refit;
 
 namespace NwisApiClient
 {
     public interface INwisApi
     {
-        public Task<List<Site>> GetSites(string state);
+        public Task<List<NwisSite>> GetSites(NwisQuery query, CancellationToken cancellationToken = new());
+
+        public Task<List<NwisCode>> GetStateCodes(CancellationToken cancellationToken = new());
+
+        public Task<List<NwisCode>> GetCountyCodes(CancellationToken cancellationToken = new());
+
+        public Task<List<NwisCode>> GetHydrologicUnitCodes(CancellationToken cancellationToken = new());
     }
 
     public class NwisApi: INwisApi
     {
-        private const string ApiUrl = "https://waterservices.usgs.gov/nwis";
-        //private readonly INwisApiInternal _nwisApiInternal = RestService.For<INwisApiInternal>(ApiUrl);
+        private readonly HttpClient _httpClient;
 
         public static INwisApi Create()
         {
@@ -21,23 +31,51 @@ namespace NwisApiClient
 
         private NwisApi()
         {
+            var handler = new HttpClientHandler()
+            {
+                AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate
+            };
 
+            _httpClient = new HttpClient(handler)
+            {
+                DefaultRequestHeaders =
+                {
+                    {"Accept-Encoding", "gzip, compress"}
+                }
+            };
         }
 
-        public async Task<List<Site>> GetSites(string state)
+        public async Task<List<NwisSite>> GetSites(NwisQuery query, CancellationToken cancellationToken = new())
         {
-            UriBuilder builder = new UriBuilder(ApiUrl + "/site");
-            builder.Query = $"stateCd={state}&format=rdb";
-            var uri = builder.Uri;
+            var msg = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = query.Uri
+            };
 
-            var res = await new HttpClient().GetAsync(uri).ConfigureAwait(false);
-            return RdbReader.Read<Site>(await res.Content.ReadAsStreamAsync().ConfigureAwait(false));
+            var res = await _httpClient.SendAsync(msg, cancellationToken);
+            return await RdbReader.ReadAsync<NwisSite>(await res.Content.ReadAsStreamAsync(cancellationToken), cancellationToken);
         }
-    }
 
-    internal interface INwisApiInternal
-    {
-        [Get("/site/?stateCd={state}&format=rdb")]
-        internal Task<HttpResponseMessage> GetSites(string state);
+        public async Task<List<NwisCode>> GetStateCodes(CancellationToken cancellationToken = new())
+        {
+            var stream = await Assembly.GetExecutingAssembly().GetResourceStream("state_codes.tsv");
+            var codes = await RdbReader.ReadAsync<NwisStateCode>(stream, cancellationToken);
+            return codes.Cast<NwisCode>().ToList();
+        }
+
+        public async Task<List<NwisCode>> GetCountyCodes(CancellationToken cancellationToken = new())
+        {
+            var stream = await Assembly.GetExecutingAssembly().GetResourceStream("county_codes.tsv");
+            var codes = await RdbReader.ReadAsync<NwisCountyCode>(stream, cancellationToken);
+            return codes.Cast<NwisCode>().ToList();
+        }
+
+        public async Task<List<NwisCode>> GetHydrologicUnitCodes(CancellationToken cancellationToken = new())
+        {
+            var stream = await Assembly.GetExecutingAssembly().GetResourceStream("hydrologic_unit_codes.tsv");
+            var codes = await RdbReader.ReadAsync<NwisHydrologicUnitCodes>(stream, cancellationToken);
+            return codes.Cast<NwisCode>().ToList();
+        }
     }
 }

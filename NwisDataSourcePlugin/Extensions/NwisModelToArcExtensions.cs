@@ -5,7 +5,6 @@ using System.Reflection;
 using ArcGIS.Core.Data;
 using ArcGIS.Core.Data.PluginDatastore;
 using CsvHelper.Configuration.Attributes;
-using NwisApiClient.Models;
 using NwisDataSourcePlugin.Attributes;
 using NwisDataSourcePlugin.Models;
 

@@ -6,7 +6,7 @@ using Geometry = ArcGIS.Core.Geometry.Geometry;
 
 namespace NwisDataSourcePlugin.Models;
 
-public class SitePluginModel : ISite
+public class NwisSitePluginModel : INwisSite
 {
     [ArcGisPluginField(alias: "OBJECTID", fieldType: FieldType.OID)]
     public int ObjectId { get; set; }

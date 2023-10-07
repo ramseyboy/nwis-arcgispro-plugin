@@ -9,10 +9,10 @@ public class RdpReaderTest
 {
     [Theory(DisplayName = "Test get sites rdb")]
     [EmbeddedResourceData("NwisApiClient.Tests/Resources/sites.rdb")]
-    public void TestReadRdb(string content)
+    public async Task TestReadRdb(string content)
     {
         var stream = new MemoryStream(Encoding.ASCII.GetBytes(content));
-        var sites = RdbReader.Read<Site>(stream);
+        var sites = await RdbReader.ReadAsync<NwisSite>(stream);
         Assert.NotNull(sites);
     }
 }

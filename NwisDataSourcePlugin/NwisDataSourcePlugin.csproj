@@ -24,10 +24,10 @@
     <Content Include="Config.xml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NwisApiClient\NwisApiClient.csproj" />
+    <PackageReference Include="NetTopologySuite" Version="2.5.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NetTopologySuite" Version="2.5.0" />
+    <ProjectReference Include="..\..\..\water-data-dotnet-sdk\NwisApiClient\NwisApiClient.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <PackageType>Plugin</PackageType>

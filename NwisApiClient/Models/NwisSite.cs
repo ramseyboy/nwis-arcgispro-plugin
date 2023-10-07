@@ -2,7 +2,7 @@ using CsvHelper.Configuration.Attributes;
 
 namespace NwisApiClient.Models;
 
-public interface ISite
+public interface INwisSite
 {
     public string? AgencyCode { get; set; }
 
@@ -29,7 +29,7 @@ public interface ISite
     public string? HydrologicUnitCode { get; set; }
 }
 
-public sealed class Site: ISite
+public sealed class NwisSite: INwisSite
 {
 
     /*

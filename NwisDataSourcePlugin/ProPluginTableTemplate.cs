@@ -13,6 +13,8 @@ using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
 using NwisApiClient;
 using NwisApiClient.Models;
+using NwisApiClient.Parameters;
+using NwisApiClient.Parameters.Site;
 using NwisDataSourcePlugin.Attributes;
 using NwisDataSourcePlugin.Extensions;
 using NwisDataSourcePlugin.Models;
@@ -31,9 +33,9 @@ namespace NwisDataSourcePlugin
     {
 
         private readonly NwisModels _modelName;
-        private readonly IList<SitePluginModel> _list;
-        private readonly SortedDictionary<int, SitePluginModel> _bTree;
-        private readonly STRtree<SitePluginModel> _rTree;
+        private readonly IList<NwisSitePluginModel> _list;
+        private readonly SortedDictionary<int, NwisSitePluginModel> _bTree;
+        private readonly STRtree<NwisSitePluginModel> _rTree;
 
         public ProPluginTableTemplate(Uri parameterUri, NwisModels modelName)
         {
@@ -44,8 +46,14 @@ namespace NwisDataSourcePlugin
 
             var state = queryParameters.Get("stateCd");
 
-            var apiData = Task.Run( async () => await nwisApi.GetSites(state)).Result;
-            _list = apiData.Select((x, i) => new SitePluginModel
+            var apiData = Task.Run( async () =>
+            {
+                var query = new NwisSiteParametersBuilder()
+                    .CountyCode("48453")
+                    .BuildQuery();
+                return await nwisApi.GetSites(query);
+            }).Result;
+            _list = apiData.Select((x, i) => new NwisSitePluginModel
             {
                 ObjectId = i,
                 AgencyCode = x.AgencyCode,
@@ -65,9 +73,9 @@ namespace NwisDataSourcePlugin
                     : null
             }).ToList();
 
-            _bTree = new SortedDictionary<int, SitePluginModel>(_list.ToDictionary(x => x.ObjectId, x => x));
+            _bTree = new SortedDictionary<int, NwisSitePluginModel>(_list.ToDictionary(x => x.ObjectId, x => x));
 
-            _rTree = new STRtree<SitePluginModel>(_list.Count);
+            _rTree = new STRtree<NwisSitePluginModel>(_list.Count);
             _list
                 .Where(x => x.Shape is not null)
                 .Select(x => (site: x, envelope: new Envelope(new NetTopologySuite.Geometries.Coordinate(x.Longitude.Value, x.Latitude.Value))))
@@ -91,7 +99,7 @@ namespace NwisDataSourcePlugin
         {
             return _modelName switch
             {
-                NwisModels.Sites => typeof(SitePluginModel).ToPluginFields(),
+                NwisModels.Sites => typeof(NwisSitePluginModel).ToPluginFields(),
                 _ => throw new ArgumentOutOfRangeException(nameof(_modelName))
             };
         }
