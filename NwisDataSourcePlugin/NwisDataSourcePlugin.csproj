@@ -28,6 +28,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\water-data-dotnet-sdk\NwisApiClient\NwisApiClient.csproj" />
+    <ProjectReference Include="..\..\..\water-data-dotnet-sdk\WaterData\WaterData.csproj" />
   </ItemGroup>
   <PropertyGroup>
     <PackageType>Plugin</PackageType>

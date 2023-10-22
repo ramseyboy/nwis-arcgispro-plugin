@@ -1,7 +1,7 @@
 using ArcGIS.Core.Data;
 using NetTopologySuite.Geometries;
-using NwisApiClient.Models;
 using NwisDataSourcePlugin.Attributes;
+using WaterData.Models;
 using Geometry = ArcGIS.Core.Geometry.Geometry;
 
 namespace NwisDataSourcePlugin.Models;
