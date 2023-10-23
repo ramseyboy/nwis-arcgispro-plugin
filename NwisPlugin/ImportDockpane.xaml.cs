@@ -16,6 +16,8 @@ using ArcGIS.Core.Data;
 using ArcGIS.Core.Data.PluginDatastore;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
+using WaterData.Models.Codes;
+using WaterData.Request;
 
 
 namespace NwisPlugin
@@ -25,82 +27,66 @@ namespace NwisPlugin
     /// </summary>
     public partial class ImportDockpaneView : UserControl
     {
-        private StateComboBoxItem selectedState;
+        private ComboBoxViewModel _selectedState;
+        private ComboBoxViewModel _selectedCounty;
+        private ComboBoxViewModel _selectedHuc;
 
         public ImportDockpaneView()
         {
             InitializeComponent();
-            var states = new List<StateComboBoxItem>(50)
-            {
-                new("AL") {IsSelected = true},
-                new("AK"),
-                new("AZ"),
-                new("AR"),
-                new("CA"),
-                new("CO"),
-                new("CT"),
-                new("DE"),
-                new("DC"),
-                new("FL"),
-                new("GA"),
-                new("HI"),
-                new("ID"),
-                new("IL"),
-                new("IN"),
-                new("IA"),
-                new("KS"),
-                new("KY"),
-                new("LA"),
-                new("ME"),
-                new("MD"),
-                new("MA"),
-                new("MI"),
-                new("MN"),
-                new("MS"),
-                new("MO"),
-                new("MT"),
-                new("NE"),
-                new("NV"),
-                new("NH"),
-                new("NJ"),
-                new("NM"),
-                new("NY"),
-                new("NC"),
-                new("ND"),
-                new("OH"),
-                new("OK"),
-                new("OR"),
-                new("PA"),
-                new("RI"),
-                new("SC"),
-                new("SD"),
-                new("TN"),
-                new("TX"),
-                new("UT"),
-                new("VT"),
-                new("VA"),
-                new("WA"),
-                new("WV"),
-                new("WI"),
-                new("WY")
-            };
-            stateComboBox.ItemsSource = states;
+
+            StateSelect.ItemsSource = BuildComboBoxViewModels(NwisRequestBuilder
+                .Builder()
+                .StateCodes()
+                .BuildRequest());
+
+            CountySelect.ItemsSource = BuildComboBoxViewModels(NwisRequestBuilder
+                .Builder()
+                .CountyCodes()
+                .BuildRequest());
+
+            HucSelect.ItemsSource = BuildComboBoxViewModels(NwisRequestBuilder
+                .Builder()
+                .HydrologicUnitCodes()
+                .BuildRequest());
         }
 
-        private void stateComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private List<ComboBoxViewModel> BuildComboBoxViewModels<T>(IWaterDataRequest<T> request) where T: NwisCode
         {
-            selectedState = stateComboBox.SelectedItem as StateComboBoxItem;
+            var data = request.GetAsync().Result;
+
+            var codes = data
+                .Select(s => new ComboBoxViewModel(s))
+                .ToList();
+            return codes;
+        }
+
+        private void StateSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _selectedState = StateSelect.SelectedItem as ComboBoxViewModel;
+        }
+
+        private void CountySelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _selectedCounty = CountySelect.SelectedItem as ComboBoxViewModel;
+        }
+
+        private void HucSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            _selectedHuc = HucSelect.SelectedItem as ComboBoxViewModel;
         }
 
         public async void ImportButton_Click(object sender, RoutedEventArgs e)
         {
             await QueuedTask.Run(() =>
             {
-                var builder = new UriBuilder("http://nwis/site")
-                {
-                    Query = $"stateCd={selectedState.Label}"
-                };
-                var uri = builder.Uri;
+                var request = NwisRequestBuilder
+                    .Builder()
+                    .Sites()
+                    .CountyCode(_selectedCounty.Code)
+                    .BuildRequest();
+
+                var uri = request.Uri;
                 using (var plugin = new PluginDatastore(
                            new PluginDatasourceConnectionPath("NwisDataSourcePlugin_Datasource", uri)))
                 {
@@ -121,14 +107,18 @@ namespace NwisPlugin
             });
         }
 
-        class StateComboBoxItem
+        class ComboBoxViewModel
         {
-            public string Label { get; set; }
-            public bool IsSelected { get; set; }
+            public NwisCode Code { get; }
 
-            public StateComboBoxItem(string label)
+            public ComboBoxViewModel(NwisCode code)
             {
-                Label = label;
+                Code = code;
+            }
+
+            public override string ToString()
+            {
+                return $"{Code.Label} - {Code.Code}";
             }
         }
     }
