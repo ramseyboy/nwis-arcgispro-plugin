@@ -14,10 +14,13 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using ArcGIS.Core.Data;
 using ArcGIS.Core.Data.PluginDatastore;
+using ArcGIS.Core.Geometry;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using ArcGIS.Desktop.Mapping;
+using NetTopologySuite.Geometries;
 using WaterData.Models.Codes;
 using WaterData.Request;
+using Envelope = ArcGIS.Core.Geometry.Envelope;
 
 
 namespace NwisPlugin
@@ -51,7 +54,7 @@ namespace NwisPlugin
                 .BuildRequest());
         }
 
-        private List<ComboBoxViewModel> BuildComboBoxViewModels<T>(IWaterDataRequest<T> request) where T: NwisCode
+        private List<ComboBoxViewModel> BuildComboBoxViewModels<T>(IWaterDataRequest<T> request) where T : NwisCode
         {
             var data = request.GetAsync().Result;
 
@@ -80,11 +83,40 @@ namespace NwisPlugin
         {
             await QueuedTask.Run(() =>
             {
-                var request = NwisRequestBuilder
+                var mapView = MapView.Active;
+                if (mapView == null)
+                {
+                    throw new InvalidOperationException("No map extent loaded yet");
+                }
+
+                var extent = mapView.Extent;
+                var projectedEnvelope = GeometryEngine.Instance.Project(extent, SpatialReferences.WGS84).Extent;
+
+                var boundingBox = new NetTopologySuite.Geometries.Envelope(projectedEnvelope.XMin,
+                    projectedEnvelope.XMax, projectedEnvelope.YMin, projectedEnvelope.YMax);
+
+                var builder = NwisRequestBuilder
                     .Builder()
-                    .Sites()
-                    .CountyCode(_selectedCounty.Code)
-                    .BuildRequest();
+                    .Sites();
+
+                if (_selectedState?.Code is not null)
+                {
+                    builder.StateCode(_selectedState.Code is NwisStateCode state ? state : throw new InvalidOperationException());
+                }
+
+                if (_selectedCounty?.Code is not null)
+                {
+                    builder.CountyCode(_selectedCounty.Code);
+                }
+
+                if (_selectedHuc?.Code is not null)
+                {
+                    builder.HydrologicUnitCode(_selectedHuc.Code);
+                }
+
+                builder.BoundingBox(boundingBox);
+
+                var request = builder.BuildRequest();
 
                 var uri = request.Uri;
                 using (var plugin = new PluginDatastore(
@@ -100,7 +132,8 @@ namespace NwisPlugin
                         {
                             //StandaloneTableFactory.Instance.CreateStandaloneTable(new StandaloneTableCreationParams(table), MapView.Active.Map);
                             //Add as a layer to the active map or scene
-                            LayerFactory.Instance.CreateLayer<FeatureLayer>(new FeatureLayerCreationParams(table as FeatureClass), MapView.Active.Map);
+                            LayerFactory.Instance.CreateLayer<FeatureLayer>(
+                                new FeatureLayerCreationParams(table as FeatureClass), MapView.Active.Map);
                         }
                     }
                 }
