@@ -1,0 +1,3 @@
+[submodule "submodule/water-data-dotnet-sdk"]
+	path = submodule/water-data-dotnet-sdk
+	url = https://github.com/ramseyboy/water-data-dotnet-sdk.git

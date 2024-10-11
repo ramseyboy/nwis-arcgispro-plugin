@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ArcGIS defaultAssembly="WaterData.ArcGis.Plugin.dll" defaultNamespace="WaterData.ArcGis.Plugin" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///ArcGIS.Desktop.Framework.Local.xsd">
+  <AddInInfo id="{ecf128cf-1857-4c36-91b6-e2f715d6f9f1}" version="1.0" desktopVersion="3.1.41833">
+    <Name>WaterData Plugin</Name>
+    <Description>WaterData Plugin description</Description>
+    <Image>Images\AddinDesktop32.png</Image>
+    <Author>Walker Hannan</Author>
+    <Company>Acme</Company>
+    <Date>9/12/2023 7:55:33 PM</Date>
+    <Subject>Framework</Subject>
+    <!-- Note subject can be one or more of these topics:
+                    Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
+  </AddInInfo>
+  <modules>
+    <insertModule id="WaterData_Module" className="WaterDataModule" autoLoad="false" caption="WaterDataModule">
+      <!-- uncomment to have the control hosted on a separate tab-->
+      <tabs></tabs>
+      <groups>
+        <!-- comment this out if you have no controls on the Addin tab to avoid
+              an empty group-->
+        <group id="WaterData_Group1" caption="Group 1" appearsOnAddInTab="true">
+          <button refID="WaterData_ImportDockpane_ShowButton" size="large" />
+        </group>
+      </groups>
+      <controls>
+        <!-- add your controls here -->
+        <button id="WaterData_ImportDockpane_ShowButton" caption="Import NWIS Dataset" className="MainRibbonButtonPlugin" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
+        </button>
+        <button id="WaterData_ImportDockpane_MenuButton" caption="Options" className="MainDockPaneMenuButtonPlugin" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
+        </button>
+      </controls>
+      <dockPanes>
+        <dockPane id="WaterData_ImportDockpane" caption="Import" className="MainDockPanePlugin" dock="group" dockWith="esri_core_projectDockPane">
+          <content className="ImportDockpaneView" />
+        </dockPane>
+      </dockPanes>
+      <menus>
+        <menu id="WaterData_ImportDockpane_Menu" caption="Options" contextMenu="true">
+          <button refID="WaterData_ImportDockpane_MenuButton" />
+        </menu>
+      </menus>
+    </insertModule>
+  </modules>
+</ArcGIS>

@@ -8,13 +8,13 @@ using ArcGIS.Core.Data.PluginDatastore;
 using ArcGIS.Core.Geometry;
 using NetTopologySuite.Geometries;
 using NetTopologySuite.Index.Strtree;
-using NwisDataSourcePlugin.Extensions;
-using NwisDataSourcePlugin.Models;
-using WaterData.Models;
-using WaterData.Request;
+using WaterData.ArcGis.Plugin.DataSource.Extensions;
+using WaterData.ArcGis.Plugin.DataSource.Models;
+using WaterData.Nwis;
+using WaterData.Nwis.Models;
 using Envelope = ArcGIS.Core.Geometry.Envelope;
 
-namespace NwisDataSourcePlugin;
+namespace WaterData.ArcGis.Plugin.DataSource;
 
 internal interface IPluginRowProvider
 {

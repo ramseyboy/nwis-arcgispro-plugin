@@ -3,11 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.7.34031.279
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NwisDataSourcePlugin", "NwisDataSourcePlugin\NwisDataSourcePlugin.csproj", "{FD47764E-87FE-414F-B6CB-31AA1F08A36B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaterData.ArcGis.Plugin.DataSource", "WaterData.ArcGis.Plugin.DataSource\WaterData.ArcGis.Plugin.DataSource.csproj", "{FD47764E-87FE-414F-B6CB-31AA1F08A36B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NwisPlugin", "NwisPlugin\NwisPlugin.csproj", "{7899A399-F053-470A-8B77-D6B4B8BD78C0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WaterData.ArcGis.Plugin", "WaterData.ArcGis.Plugin\WaterData.ArcGis.Plugin.csproj", "{7899A399-F053-470A-8B77-D6B4B8BD78C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterData", "..\..\water-data-dotnet-sdk\WaterData\WaterData.csproj", "{58A118F6-C4B7-43DC-844B-42C26DEBF5BF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterData.ArcGis.Abstractions", "WaterData.ArcGis.Abstractions\WaterData.ArcGis.Abstractions.csproj", "{8A468EC0-4529-42E8-A072-7F1765E098A8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterData.ArcGis.Abstractions.Windows", "WaterData.ArcGis.Abstractions.Windows\WaterData.ArcGis.Abstractions.Windows.csproj", "{5141122D-3062-4858-AA55-F6585B3CF9BA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WaterData", "submodule\water-data-dotnet-sdk\WaterData\WaterData.csproj", "{E942C067-E359-44DF-BDD2-A5F74BB746D5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +27,18 @@ Global
 		{7899A399-F053-470A-8B77-D6B4B8BD78C0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7899A399-F053-470A-8B77-D6B4B8BD78C0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7899A399-F053-470A-8B77-D6B4B8BD78C0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{58A118F6-C4B7-43DC-844B-42C26DEBF5BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{58A118F6-C4B7-43DC-844B-42C26DEBF5BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{58A118F6-C4B7-43DC-844B-42C26DEBF5BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{58A118F6-C4B7-43DC-844B-42C26DEBF5BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8A468EC0-4529-42E8-A072-7F1765E098A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8A468EC0-4529-42E8-A072-7F1765E098A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8A468EC0-4529-42E8-A072-7F1765E098A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8A468EC0-4529-42E8-A072-7F1765E098A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5141122D-3062-4858-AA55-F6585B3CF9BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5141122D-3062-4858-AA55-F6585B3CF9BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5141122D-3062-4858-AA55-F6585B3CF9BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5141122D-3062-4858-AA55-F6585B3CF9BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E942C067-E359-44DF-BDD2-A5F74BB746D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E942C067-E359-44DF-BDD2-A5F74BB746D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E942C067-E359-44DF-BDD2-A5F74BB746D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E942C067-E359-44DF-BDD2-A5F74BB746D5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

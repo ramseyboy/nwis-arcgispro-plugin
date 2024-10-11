@@ -2,13 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using ArcGIS.Core.Data;
 using ArcGIS.Core.Data.PluginDatastore;
-using CsvHelper.Configuration.Attributes;
-using NwisDataSourcePlugin.Attributes;
-using NwisDataSourcePlugin.Models;
+using WaterData.ArcGis.Plugin.DataSource.Attributes;
 
-namespace NwisDataSourcePlugin.Extensions;
+namespace WaterData.ArcGis.Plugin.DataSource.Extensions;
 
 public static class NwisModelToArcExtensions
 {
@@ -16,7 +13,9 @@ public static class NwisModelToArcExtensions
     {
         return type.GetProperties(BindingFlags.Public | BindingFlags.Instance | BindingFlags.FlattenHierarchy)
             .Where(pi => Attribute.IsDefined(pi, typeof(ArcGisPluginFieldAttribute)))
-            .Select(pi => (pi.GetCustomAttribute(typeof(ArcGisPluginFieldAttribute)) as ArcGisPluginFieldAttribute).ToPluginField(pi))
+            .Select(pi =>
+                (pi.GetCustomAttribute(typeof(ArcGisPluginFieldAttribute)) as ArcGisPluginFieldAttribute)
+                .ToPluginField(pi))
             .ToArray();
     }
 
