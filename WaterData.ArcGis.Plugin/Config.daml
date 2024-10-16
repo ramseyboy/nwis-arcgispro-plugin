@@ -27,20 +27,12 @@
         <button id="WaterData_ImportDockpane_ShowButton" caption="Import NWIS Dataset" className="MainRibbonButtonPlugin" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
           <tooltip heading="Show Dockpane">Show Dockpane<disabledText /></tooltip>
         </button>
-        <button id="WaterData_ImportDockpane_MenuButton" caption="Options" className="MainDockPaneMenuButtonPlugin" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
-          <tooltip heading="Burger Menu Button">ToolTip<disabledText /></tooltip>
-        </button>
       </controls>
       <dockPanes>
         <dockPane id="WaterData_ImportDockpane" caption="Import" className="MainDockPanePlugin" dock="group" dockWith="esri_core_projectDockPane">
           <content className="ImportDockpaneView" />
         </dockPane>
       </dockPanes>
-      <menus>
-        <menu id="WaterData_ImportDockpane_Menu" caption="Options" contextMenu="true">
-          <button refID="WaterData_ImportDockpane_MenuButton" />
-        </menu>
-      </menus>
     </insertModule>
   </modules>
 </ArcGIS>
